@@ -2,17 +2,25 @@ package com.codepath.android.booksearch.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.android.booksearch.GlideApp;
 import com.codepath.android.booksearch.R;
+import com.codepath.android.booksearch.models.Book;
+
+import org.parceler.Parcels;
 
 public class BookDetailActivity extends AppCompatActivity {
     private ImageView ivBookCover;
     private TextView tvTitle;
     private TextView tvAuthor;
+
+    Book book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +32,25 @@ public class BookDetailActivity extends AppCompatActivity {
         tvAuthor = (TextView) findViewById(R.id.tvAuthor);
 
         // Extract book object from intent extras
+        //Unwrap the book that is passed in via intent, using its simple name as key
+        book = (Book) Parcels.unwrap(getIntent().getParcelableExtra(Book.class.getSimpleName()));
+        Log.d("BookDetailsActivity", String.format("Showing details for '%s'", book.getTitle()));
 
         // Use book object to populate data into views
+        tvTitle.setText(book.getTitle());
+        tvAuthor.setText(book.getAuthor());
+
+        GlideApp.with(getApplicationContext())
+                .load(book.getCoverUrl())
+                .into(ivBookCover);
+
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(book.getTitle()); // set the top title
+
     }
 
 
